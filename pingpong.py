@@ -15,29 +15,30 @@ class GameSprite(sprite.Sprite):
 class Player(GameSprite):
     def update_l(self):
         keys = key.get_pressed()
-        if keys[K_w] and self.rect.x > 5:
+        if keys[K_w] and self.rect.y > 5:
             self.rect.y -= self.speed
-        if keys[K_s] and self.rect.x < 520:
+        if keys[K_s] and self.rect.y < 455:
             self.rect.y += self.speed
 
     def update_r(self):
         keys = key.get_pressed()
-        if keys[K_UP] and self.rect.x > 5:
+        if keys[K_UP] and self.rect.y > 5:
             self.rect.y -= self.speed
-        if keys[K_DOWN] and self.rect.x < 520:
+        if keys[K_DOWN] and self.rect.y < 455:
             self.rect.y += self.speed
 window = display.set_mode((600,500))
 window.fill((200,255,255))
-
+win_height = 500
+win_width = 600
 game = True
 clock = time.Clock()
 
 speed_x = 3
 speed_y = 3
 # создаем спрайты для игры
-# racket1 = Player("",30,200,4,50,150)
-# racket2 = Player("",520,200,4,50,150)
-# ball = Player("",200,200,4,50,50)
+racket1 = Player("",30,200,4,50,10)
+racket2 = Player("",520,200,4,50,10)
+ball = Player("",200,200,25,25,25)
 # создаем надписи
 font.init()
 font = font.Font(None,35)
@@ -54,6 +55,26 @@ while game:
         racket2.update_r()
         ball.rect.x += speed_x
         ball.rect.y += speed_y
+        if sprite.collide_rect(racket1, ball) or sprite.collide_rect(racket2, ball):
+            speed_x *= -1
+            speed_y *= 1
+        if ball.rect.y > win_height -50 or ball.rect.y < 10:
+            speed_y *= -1
+        
+
+        if ball.rect.x < 0:
+            finish = True
+            window.blit(lose1, (200,200))
+            game_over = True
+        if ball.rect.x < win_width:
+            finish = True
+            window.blit(lose2, (200,200))
+            game_over = True
+    racket1.reset()
+    racket2.reset()
+    
+    ball.reset()
+        
 
     display.update()
     clock.tick(60)
